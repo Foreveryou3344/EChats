@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+
+<head>
+
+    <meta charset="utf-8">
+    <title>ECharts 地图展示</title>
+</head>
+<style type="text/css">
+    * {
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<body>
+
+    <!--定义页面图表容器-->
+    <!-- 必须制定容器的大小（height、width） -->
+    <div id="mapsProvice" style="width: 49%; height: 500px; border: 1px solid #ccc; display: inline-block;float: left;"></div>
+    <div id="mapsCity" style="width: 49%; height: 500px; border: 1px solid #ccc; display: inline-block;float: left;"></div>
+
+
+
+    <script src="jquery.min.js"></script>
+    <script type="text/javascript" src="echarts.js"></script>
+    <script type="text/javascript" src="mapjs/湖北.js"></script>
+    <script type="text/javascript">
+        function loadScript(url, callback) {
+            var script = document.createElement("script")
+            script.type = "text/javascript";
+            if (script.readyState) {
+                script.onreadystatechange = function() {
+                    if (script.readyState == "loaded" || script.readyState == "complete") {
+                        script.onreadystatechange = null;
+                        callback();
+                    }
+                };
+            } else {
+                script.onload = function() {
+                    callback();
+                };
+            }
+            script.src = url;
+            document.getElementsByTagName("head")[0].appendChild(script);
+        }
+
+        var data = echarts.getMap('湖北').geoJson;//获取注册地图的详细信息 可以用geoJson修改后重新注册解决label重叠的问题
+        var d = [];
+        for( var i=0;i<data.features.length;i++ ){
+            var cityurl = "mapjs/city/" + data.features[i].properties.name + ".js";
+            loadScript(cityurl, setOptCity);
+            d.push({
+                name:data.features[i].properties.name,
+                value:Math.round(Math.random()*1000),
+                    selected: false
+            })
+        }
+
+        var option = {
+            title: {
+                text: '湖北态势图',
+                subtext: '进入地市可详细查看',
+                x: 'center',
+                textStyle: {
+                    color: '#404a59'
+                }
+            },
+            tooltip:{
+                trigger: 'item'
+            },
+            toolbox: { //操作按钮
+              show: true,
+              orient: 'vertical',
+              left: 'right',
+              top: 'center',
+              feature: {
+                  mark: {show: true},
+                  dataView: {show: true,readOnly:false}, //数据视图
+                  restore:{show: true}, //还原
+                  saveAsImage: {show:true}//保存为图片
+              }
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'left',
+                data: ['安全状态']
+            },
+            visualMap: {
+                left: 'left',
+                top: 'bottom',
+                min: 0,
+                max: 1000,
+                text: ['高', '低'], // 文本，默认为数值文本
+                calculable : true  // 控制范围
+            },
+            geo: {//定义地图控件，可以正常显示label
+                map: '湖北',
+                roam: true,
+                selectedMode: 'single',//选中模式 单选  响应点击事件需要设置
+                label: {
+                    normal: {
+                        show: false,
+                        textStyle: {
+                            color: 'rgba(0,0,0,0.8)'
+                        }
+                    }
+                },
+                itemStyle: {
+                    normal:{
+                        borderColor: 'rgba(0, 0, 0, 0.2)'
+                    },
+                    emphasis:{
+                        areaColor: null,
+                        shadowOffsetX: 0,
+                        shadowOffsetY: 0,
+                        shadowBlur: 20,
+                        borderWidth: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            },
+            series: [{
+                name: '安全状态',
+                type: 'map',
+                geoIndex: 0,//引用地图控件，不能正常响应点击事件
+                left: '10%',
+                top: 'center',
+                // map: '湖北',
+                // roam: false,//是否开启鼠标缩放
+                // selectedMode: 'single',//选中模式 单选
+                // label: {
+                //   normal: {
+                //       show: false,
+                //       textStyle: {
+                //           color: 'rgba(0,0,0,0.5)'
+                //       }
+                //   }
+                // },
+                // itemStyle: {
+                //     normal: {
+                //         borderColor: 'rgba(0,0,0,0.2)'
+                //     },
+                //     emphasis: {
+                //         areaColor: null,
+                //         shadowOffsetX: 0,
+                //         shadowOffsetY: 0,
+                //         shadowBlur: 20,
+                //         borderWidth: 0,
+                //         shadowColor: 'rgba(0, 0, 0, 0.5)'
+                //     }
+                // },
+                data: d
+            }],
+            animation: false
+        };
+        var myChartProvice = echarts.init(document.getElementById('mapsProvice'));
+        var myChartCity = echarts.init(document.getElementById('mapsCity'));
+        myChartProvice.setOption(option, true);
+        var selectCity = "武汉市";
+        setOptCity();
+        myChartProvice.on('geoselectchanged', function(param) {
+            selectCity = param.batch[0].name;
+            setOptCity();
+        });
+
+        function setOptCity() {
+            // var data = echarts.getMap(selectCity).geoJson;
+            // var d = [];
+            // for( var i=0;i<data.features.length;i++ ){
+            //     d.push({
+            //         name:data.features[i].properties.name,
+            //         value:Math.round(Math.random()*1000)
+            //     })
+            // }
+            var option = {
+                title: {
+                    text: selectCity + '地区详情',
+                    x: 'center',
+                    textStyle: {
+                        color: 'black'
+                    }
+                },
+                roam: true,
+                visualMap: {
+                    left: 'left',
+                    top: 'bottom',
+                    min: 0,
+                    max: 1000,
+                    text: ['高', '低'], // 文本，默认为数值文本
+                    calculable : true  // 控制范围
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                series: [{
+                    name: '安全态势',
+                    type: 'map',
+                    map: selectCity,
+                    left: 'center',
+                    top: 'center',
+                    label: {
+                        show: true,
+                        textStyle: {
+                            color: 'rgba(0,0,0,0.8)'
+                        }
+                    },
+                    itemStyle: {
+                        borderColor: 'rgba(0, 0, 0, 0.2)'
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            areaColor: null,
+                            shadowOffsetX: 0,
+                            shadowOffsetY: 0,
+                            shadowBlur: 20,
+                            borderWidth: 0,
+                            shadowColor: 'rgba(0, 0, 0, 0.5)'
+                        }
+                    },
+                    selectedMode: 'single',
+                    data: ''
+                }],
+                animation: false,
+
+            }
+
+
+            myChartCity.setOption(option, true);//第二个参数为是否不合并 ，默认为false，即合并
+        }
+    </script>
+
+</body>
+
+</html>
