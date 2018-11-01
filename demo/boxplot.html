@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>boxplot</title>
+</head>
+<body>
+<div id="demo" style="width: 100%; height: 800px;"></div>
+<script type="text/javascript" src="../static/echarts.js"></script>
+<script type="text/javascript">
+function asc(arr) {
+    arr.sort(function (a, b) {
+        return a - b;
+    });
+    return arr;
+}
+function quantile(ascArr, p) {
+    var H = (ascArr.length - 1) * p + 1;
+    var h = Math.floor(H);
+    var v = +ascArr[h - 1];
+    var e = H - h;
+    return e ? v + e * (ascArr[h] - v) : v;
+}
+var prepareBoxplotData = function (rawData, opt) {
+    opt = opt || [];
+    var boxData = [];
+    var outliers = [];
+    var axisData = [];
+    var boundIQR = opt.boundIQR;
+    var useExtreme = boundIQR === 'none' || boundIQR === 0;
+
+    for (var i = 0; i < rawData.length; i++) {
+        axisData.push(i + '');
+        var ascList = asc(rawData[i].slice());
+
+        var Q1 = quantile(ascList, 0.25);
+        var Q2 = quantile(ascList, 0.5);
+        var Q3 = quantile(ascList, 0.75);
+        var min = ascList[0];
+        var max = ascList[ascList.length - 1];
+
+        var bound = (boundIQR == null ? 1.5 : boundIQR) * (Q3 - Q1);
+
+        var low = useExtreme
+            ? min
+            : Math.max(min, Q1 - bound);
+        var high = useExtreme
+            ? max
+            : Math.min(max, Q3 + bound);
+
+        boxData.push([low, Q1, Q2, Q3, high]);
+
+        for (var j = 0; j < ascList.length; j++) {
+            var dataItem = ascList[j];
+            if (dataItem < low || dataItem > high) {
+                var outlier = [i, dataItem];
+                opt.layout === 'vertical' && outlier.reverse();
+                outliers.push(outlier);
+            }
+        }
+    }
+    return {
+        boxData: boxData,
+        outliers: outliers,
+        axisData: axisData
+    };
+};
+var myChart = echarts.init(document.getElementById('demo'));
+var data = prepareBoxplotData([
+    [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
+    [960, 940, 960, 940, 880, 800, 850, 880, 900, 840, 830, 790, 810, 880, 880, 830, 800, 790, 760, 800],
+    [880, 880, 880, 860, 720, 720, 620, 860, 970, 950, 880, 910, 850, 870, 840, 840, 850, 840, 840, 840],
+    [890, 810, 810, 820, 800, 770, 760, 740, 750, 760, 910, 920, 890, 860, 880, 720, 840, 850, 850, 780],
+    [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
+]);
+
+option = {
+    title: [
+        {
+            text: 'Michelson-Morley Experiment',
+            left: 'center',
+        },
+        {
+            text: 'upper: Q3 + 1.5 * IQR \nlower: Q1 - 1.5 * IQR',
+            borderColor: '#999',
+            borderWidth: 1,
+            textStyle: {
+                fontSize: 14
+            },
+            left: '10%',
+            top: '90%'
+        }
+    ],
+    tooltip: {
+        trigger: 'item',
+        axisPointer: {
+            type: 'shadow'
+        }
+    },
+    grid: {
+        left: '10%',
+        right: '10%',
+        bottom: '15%'
+    },
+    xAxis: {
+        type: 'category',
+        data: data.axisData,
+        boundaryGap: true,
+        nameGap: 30,
+        splitArea: {
+            show: false
+        },
+        axisLabel: {
+            formatter: 'expr {value}'
+        },
+        splitLine: {
+            show: false
+        }
+    },
+    yAxis: {
+        type: 'value',
+        name: 'km/s minus 299,000',
+        splitArea: {
+            show: true
+        }
+    },
+    series: [
+        {
+            name: 'boxplot',
+            type: 'boxplot',
+            data: data.boxData,
+            tooltip: {
+                formatter: function (param) {
+                    return [
+                        'Experiment ' + param.name + ': ',
+                        'upper: ' + param.data[5],
+                        'Q3: ' + param.data[4],
+                        'median: ' + param.data[3],
+                        'Q1: ' + param.data[2],
+                        'lower: ' + param.data[1]
+                    ].join('<br/>');
+                }
+            }
+        },
+        {
+            name: 'outlier',
+            type: 'scatter',
+            data: data.outliers
+        }
+    ]
+};
+
+myChart.setOption(option);
+</script>
+</body>
+</html>
