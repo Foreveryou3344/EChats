@@ -5,8 +5,19 @@
     <title>boxplot</title>
 </head>
 <body>
-<div id="demo" style="width: 100%; height: 800px;"></div>
+<div>
+    <button id="search" type="button" style="float: right;width: 50px;margin-right: 10%;color: #fff;background-color: deepskyblue">查询</button>
+    <select id="leibie" style="float: right;width: 100px;margin-right: 10px;">
+        <option value="0">类别1</option>
+        <option value="1">类别2</option>
+        <option value="2">类别3</option>
+        <option value="3">类别4</option>
+    </select>
+    <label style="float: right;font-weight: bold;margin-right: 10px">物料类别:</label>
+</div>
+<div id="demo" style="width: 100%; height: 800px;clear: both;"></div>
 <script type="text/javascript" src="../static/echarts.js"></script>
+<script type="text/javascript" src="../static/jquery.min.js"></script>
 <script type="text/javascript">
 //boxplot 数据处理开始
 function asc(arr) {
@@ -68,13 +79,30 @@ var prepareBoxplotData = function (rawData, opt) {
 };
 //boxplot 数据处理结束
 var myChart = echarts.init(document.getElementById('demo'));
-var data = prepareBoxplotData([
-    [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
-    [960, 940, 960, 940, 880, 800, 850, 880, 900, 840, 830, 790, 810, 880, 880, 830, 800, 790, 760, 800],
-    [880, 880, 880, 860, 720, 720, 620, 860, 970, 950, 880, 910, 850, 870, 840, 840, 850, 840, 840, 840],
-    [890, 810, 810, 820, 800, 770, 760, 740, 750, 760, 910, 920, 890, 860, 880, 720, 840, 850, 850, 780],
-    [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
-]);
+var totaldata = [[
+            [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
+            [960, 940, 960, 940, 880, 800, 850, 880, 900, 840, 830, 790, 810, 880, 880, 830, 800, 790, 760, 800],
+            [880, 880, 880, 860, 720, 720, 620, 860, 970, 950, 880, 910, 850, 870, 840, 840, 850, 840, 840, 840],
+            [890, 810, 810, 820, 800, 770, 760, 740, 750, 760, 910, 920, 890, 860, 880, 720, 840, 850, 850, 780],
+            [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
+    ],
+    [
+            [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
+            [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
+    ],
+    [
+            [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
+            [960, 940, 960, 940, 880, 800, 850, 880, 900, 840, 830, 790, 810, 880, 880, 830, 800, 790, 760, 800],
+            [880, 880, 880, 860, 720, 720, 620, 860, 970, 950, 880, 910, 850, 870, 840, 840, 850, 840, 840, 840],
+            [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
+    ],
+    [
+            [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
+            [890, 810, 810, 820, 800, 770, 760, 740, 750, 760, 910, 920, 890, 860, 880, 720, 840, 850, 850, 780],
+            [890, 840, 780, 810, 760, 810, 790, 810, 820, 850, 870, 870, 810, 740, 810, 940, 950, 800, 810, 870]
+    ]
+];
+var data = prepareBoxplotData(totaldata[0]);
 
 option = {
     title: [
@@ -153,6 +181,40 @@ option = {
 };
 
 myChart.setOption(option);
+$("#search").click(function () {
+   var leibie = $('#leibie').val();
+   data = prepareBoxplotData(totaldata[leibie]);
+   option = {
+       xAxis: {
+        data: data.axisData
+    },
+       series: [
+        {
+            name: 'boxplot',
+            type: 'boxplot',
+            data: data.boxData,
+            tooltip: {
+                formatter: function (param) {
+                    return [
+                        'Experiment ' + param.name + ': ',
+                        'upper: ' + param.data[5],
+                        'Q3: ' + param.data[4],
+                        'median: ' + param.data[3],
+                        'Q1: ' + param.data[2],
+                        'lower: ' + param.data[1]
+                    ].join('<br/>');
+                }
+            }
+        },
+        {
+            name: 'outlier',
+            type: 'scatter',
+            data: data.outliers
+        }
+    ]
+   }
+   myChart.setOption(option);
+});
 </script>
 </body>
 </html>
