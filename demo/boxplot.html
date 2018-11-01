@@ -107,7 +107,7 @@ var data = prepareBoxplotData(totaldata[0]);
 option = {
     title: [
         {
-            text: 'Michelson-Morley Experiment',
+            text: '湖北移动退库率统计',
             left: 'center',
         },
         {
@@ -134,14 +134,14 @@ option = {
     },
     xAxis: {
         type: 'category',
-        data: data.axisData,
+        data: data.axisData,//箱型图默认是水平排列，所以不需要x轴的定位，所以需要另外赋值对应
         boundaryGap: true,//坐标轴留白策略，true含义为刻度为分割线，标签和数据在分割线中间区域
         nameGap: 30,
         splitArea: {
             show: false
         },
         axisLabel: {//标签设置
-            formatter: 'expr {value}'
+            formatter: '物料 {value}'
         },
         splitLine: {
             show: false
@@ -149,7 +149,7 @@ option = {
     },
     yAxis: {
         type: 'value',
-        name: 'km/s',
+        name: '退库率',
         splitArea: {
             show: true
         }
@@ -162,7 +162,7 @@ option = {
             tooltip: {
                 formatter: function (param) {
                     return [
-                        'Experiment ' + param.name + ': ',
+                        '物料 ' + param.name + ': ',
                         'upper: ' + param.data[5],
                         'Q3: ' + param.data[4],
                         'median: ' + param.data[3],
