@@ -8,6 +8,7 @@
 <div id="demo" style="width: 100%; height: 800px;"></div>
 <script type="text/javascript" src="../static/echarts.js"></script>
 <script type="text/javascript">
+//boxplot 数据处理开始
 function asc(arr) {
     arr.sort(function (a, b) {
         return a - b;
@@ -65,6 +66,7 @@ var prepareBoxplotData = function (rawData, opt) {
         axisData: axisData
     };
 };
+//boxplot 数据处理结束
 var myChart = echarts.init(document.getElementById('demo'));
 var data = prepareBoxplotData([
     [850, 740, 900, 1070, 930, 850, 950, 980, 980, 880, 1000, 980, 930, 650, 760, 810, 1000, 1000, 960, 960],
@@ -105,12 +107,12 @@ option = {
     xAxis: {
         type: 'category',
         data: data.axisData,
-        boundaryGap: true,
+        boundaryGap: true,//坐标轴留白策略，true含义为刻度为分割线，标签和数据在分割线中间区域
         nameGap: 30,
         splitArea: {
             show: false
         },
-        axisLabel: {
+        axisLabel: {//标签设置
             formatter: 'expr {value}'
         },
         splitLine: {
@@ -119,7 +121,7 @@ option = {
     },
     yAxis: {
         type: 'value',
-        name: 'km/s minus 299,000',
+        name: 'km/s',
         splitArea: {
             show: true
         }
