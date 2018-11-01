@@ -45,9 +45,9 @@ var prepareBoxplotData = function (rawData, opt) {
         axisData.push(i + '');
         var ascList = asc(rawData[i].slice());
 
-        var Q1 = quantile(ascList, 0.25);
-        var Q2 = quantile(ascList, 0.5);
-        var Q3 = quantile(ascList, 0.75);
+        var Q1 = quantile(ascList, 0.25);//第一四分位数 位于从小到大排列的数据1/4位置
+        var Q2 = quantile(ascList, 0.5);//第二四分位数 又称中位数 ，位于中间位置
+        var Q3 = quantile(ascList, 0.75);//第三四分位数 位于3/4位置  注：IQR=Q3-Q1 四分位距
         var min = ascList[0];
         var max = ascList[ascList.length - 1];
 
