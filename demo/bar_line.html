@@ -5,10 +5,40 @@
     <title>折柱混合</title>
 </head>
 <body>
-<div id="demo" style="width: 100%; height: 800px;"></div>
+<div>
+    <button id="search" type="button" style="float: right;width: 50px;margin-right: 10%;color: #fff;background-color: deepskyblue">查询</button>
+    <select id="leibie" style="float: right;width: 100px;margin-right: 10px;">
+        <option value="0">年</option>
+        <option value="1">季度</option>
+    </select>
+    <label style="float: right;font-weight: bold;margin-right: 10px">时间跨度:</label>
+</div>
+<div id="demo" style="width: 100%; height: 800px;clear: both;"></div>
 <script type="text/javascript" src="../static/echarts.js"></script>
+<script type="text/javascript" src="../static/jquery.min.js"></script>
 <script type="text/javascript">
 var myChart = echarts.init(document.getElementById('demo'));
+var totaldata = [
+    [
+        ['2016',400,10],
+        ['2017',700,40],
+        ['2018',300,-20]
+    ],
+    [
+        ['2016春',40,10],
+        ['2016夏',80,20],
+        ['2016秋',120,50],
+        ['2016冬',260,50],
+        ['2017春',300,10],
+        ['2017夏',200,-10],
+        ['2017秋',120,-20],
+        ['2017冬',80,-15],
+        ['2018春',120,10],
+        ['2018夏',100,-10],
+        ['2018秋',40,-50],
+        ['2018冬',40,0],
+    ]
+]
 option = {
     tooltip: {
         trigger: 'axis',//坐标轴触发
@@ -19,10 +49,13 @@ option = {
             }
         }
     },
+    dataset: {
+        source:totaldata[1]
+    },
     toolbox: {
         feature: {
             dataView: {show: true, readOnly: false},
-            magicType: {show: true, type: ['line', 'bar']},
+            magicType: {show: true, type: ['line', 'bar']},//动态类型切换
             restore: {show: true},
             saveAsImage: {show: true}
         }
@@ -33,7 +66,6 @@ option = {
     xAxis: [
         {
             type: 'category',
-            data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'],
             axisPointer: {
                 type: 'shadow'
             }
@@ -42,10 +74,7 @@ option = {
     yAxis: [
         {
             type: 'value',
-            name: '退货量',
-            min: 0,
-            max: 250,
-            interval: 50,
+            name: '退库量',
             axisLabel: {
                 formatter: '{value}'
             }
@@ -60,19 +89,27 @@ option = {
     ],
     series: [
         {
-            name:'退货量',
+            name:'退库量',
             type:'bar',
-            data:[2.6, 5.9, 9.0, 26.4, 28.7, 70.7, 175.6, 182.2, 48.7, 18.8, 6.0, 2.3]
+            barMaxWidth: 100//最大宽度，可以设置成类目宽度的百分比
         },
         {
             name:'环比',
             type:'line',
             yAxisIndex: 1,
-            data:[2.0, 2.2, 3.3, 4.5, 6.3, 10.2, 20.3, 23.4, 23.0, 16.5, 12.0, 6.2]
         }
     ]
 };
 myChart.setOption(option);
+$("#search").click(function () {
+   var leibie = $('#leibie').val();
+   option = {
+       dataset: {
+           source:totaldata[leibie]
+       }
+   }
+   myChart.setOption(option);//合并配置，加参数true，不合并配置
+});
 </script>
 </body>
 </html>
