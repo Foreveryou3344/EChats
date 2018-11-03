@@ -17,7 +17,6 @@ option = {
     },
     dataset: {
             source: [
-                ['product','入库','退库'],
                 ['物料1', 555, 90],
                 ['物料2', 455, 80],
                 ['物料3', 550, 98],
@@ -31,14 +30,12 @@ option = {
             type:'pie',
             selectedMode: 'single',
             radius: [0, '30%'],
-
             label: {
                 formatter: '{b}：{d}%  ',
                 position: 'inner'//标签位置，饼图扇形内部
             },
             labelLine: {//标签引导线
                 show: false
-
             },
             encode: {
                 itemName: 0,
