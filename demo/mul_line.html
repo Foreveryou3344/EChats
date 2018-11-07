@@ -20,11 +20,14 @@
 var myChart = echarts.init(document.getElementById('demo'));
 var totaldata = [
     [
+
+        ['name','仓库1','仓库2','仓库3','仓库4','仓库5','仓库6','仓库7'],
         ['2016',400,10,243,534,234,23,42],
         ['2017',700,40,523,765,432,64,3],
         ['2018',300,20,1324,24,1234,56,43]
     ],
     [
+        ['name','仓库1','仓库2','仓库3','仓库4','仓库5','仓库6','仓库7'],
         ['2016春',40,10,412,214,53,546,34],
         ['2016夏',80,20,123,645,85,2,134],
         ['2016秋',120,50,412,523,754,34,21],
@@ -61,7 +64,6 @@ option = {
         }
     },
     legend: {
-        data:['仓库1','仓库2','仓库3','仓库4','仓库5','仓库6','仓库7']
     },
     xAxis: [
         {
@@ -77,44 +79,72 @@ option = {
             }
         }
     ],
+    grid: {top: '55%'},
     series: [
         {
-            name:'仓库1',
             type:'line',
             smooth: true
         },
         {
-            name:'仓库2',
             type:'line',
             smooth: true
         },
         {
-            name:'仓库3',
             type:'line',
             smooth: true
         },
         {
-            name:'仓库4',
             type:'line',
             smooth: true
         },
         {
-            name:'仓库5',
             type:'line',
             smooth: true
         },
         {
-            name:'仓库6',
             type:'line',
             smooth: true
         },
         {
-            name:'仓库7',
             type:'line',
             smooth: true
+        },
+        {
+            type: 'pie',
+            id: 'pie',//指定id用于后面鼠标事件更新数据
+            radius: '30%',
+            center: ['50%', '25%'],
+            roseType: 'radius',
+            seriesLayoutBy: 'row',
+            label: {
+                formatter: '{b}: {@[0]} ({d}%)'//b数据名 d百分比 {@xxx}xxx维度的值
+            },
+            encode: {
+                itemName: 'name',
+                value: 1,
+                tooltip: 1
+            }
         }
     ]
 };
+myChart.on('updateAxisPointer', function (event) {//坐标系点更新事件
+    var xAxisInfo = event.axesInfo[0];
+    if (xAxisInfo) {
+        var dimension = xAxisInfo.value + 1;//value index
+        myChart.setOption({
+            series: {
+                id: 'pie',
+                label: {
+                    formatter: '{b}: {@[' + dimension + ']} ({d}%)'
+                },
+                encode: {
+                    value: dimension,
+                    tooltip: dimension
+                }
+            }
+        });
+    }
+});
 myChart.setOption(option);
 $("#search").click(function () {
    var leibie = $('#leibie').val();
