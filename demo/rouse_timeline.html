@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>时间轴玫瑰</title>
+</head>
+<body>
+<div id="demo" style="width: 100%; height: 800px;"></div>
+<script type="text/javascript" src="../static/echarts.js"></script>
+<script type="text/javascript">
+var dataMap = {};
+
+dataMap = {
+    //max : 60000,
+    2014:[
+        {name: '项目一', value: 14113},
+        {name: '项目二', value: 9224},
+        {name: '项目三', value: 20394},
+        {name: '项目四', value: 9200},
+        {name: '项目五', value: 11672},
+        {name: '项目六', value: 18457}
+    ],
+    2015:[
+        {name: '项目一', value: 12153},
+        {name: '项目二', value: 7521},
+        {name: '项目三', value: 17235},
+        {name: '项目四', value: 7358},
+        {name: '项目五', value: 9740},
+        {name: '项目六', value: 15212}
+    ],
+    2016:[
+        {name: '项目一', value: 11115},
+        {name: '项目二', value: 6719},
+        {name: '项目三', value: 16011},
+        {name: '项目四', value: 7315},
+        {name: '项目五', value: 8496},
+        {name: '项目六', value: 6426}
+    ],
+    2017:[
+        {name: '项目一', value: 9846},
+        {name: '项目二', value: 5252},
+        {name: '项目三', value: 13607},
+        {name: '项目四', value: 6024},
+        {name: '项目五', value: 6423},
+        {name: '项目六', value: 11164}
+    ],
+    2018:[
+        {name: '项目一', value: 8117},
+        {name: '项目二', value: 4462},
+        {name: '项目三', value: 11467},
+        {name: '项目四', value: 4878},
+        {name: '项目五', value: 4944},
+        {name: '项目六', value: 9304}
+    ]
+};
+
+
+option = {
+    baseOption: {//引用时间线timeline时会使用baseOption设置一些通用设置，每次切换会和切换的原子option 合并为一个新的option
+        timeline: {//时间线
+            // y: 0,
+            axisType: 'category',//轴的类型
+            // realtime: false,//拖动原点是否实时更新视图
+            // loop: false,//是否循环
+            autoPlay: true,//自动播放
+            // currentIndex: 2,//当前选择的项，从0开始
+            playInterval: 1000,//播放间隔
+            // controlStyle: {//控制按钮的样式
+            //     position: 'left'
+            // },
+            data: [//时间轴数据对应每个原子option，可以自定义样式，和options里面的option一一对应
+                '2014年', '2015年','2016年','2017年','2018年',
+            ]
+        },
+        title: {
+            subtext: '各项目退库统计'
+        },
+        tooltip: {//提示框
+        },
+        legend: {//图例组件，可以控制系列的显示
+            x: 'right'
+        },
+        series: [
+            {
+                name: '退库占比',
+                type: 'pie',
+                center: ['50%', '50%'],
+                radius: '50%',
+                roseType: 'radius'
+            }
+        ]
+    },
+    options: [//原子option
+        {//配置会和baseoption合并
+            title: {text: '2014项目退库占比'},
+            series: [
+                {data: dataMap['2014']}
+            ]
+        },
+        {
+            title: {text: '2015项目退库占比'},
+            series: [
+                {data: dataMap['2015']}
+            ]
+        },
+        {
+            title: {text: '2016项目退库占比'},
+            series: [
+                {data: dataMap['2016']}
+            ]
+        },
+        {
+            title: {text: '2017项目退库占比'},
+            series: [
+                {data: dataMap['2017']}
+            ]
+        },
+        {
+            title: {text: '2018项目退库占比'},
+            series: [
+                {data: dataMap['2018']}
+            ]
+        }
+    ]
+};
+var myChart = echarts.init(document.getElementById('demo'));
+myChart.setOption(option, true);
+</script>
+</body>
+</html>
