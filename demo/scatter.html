@@ -67,15 +67,15 @@ option = {
             var text ='<div style="border-bottom: 1px solid rgba(255,255,255,.3); font-size: 18px;padding-bottom: 7px;margin-bottom: 7px">'
                 + obj.seriesName +'：'
                 + '</div>'
-                + '需求量：' + value[0] + '<br>'
-                + '生产量：' + value[1] + '<br>'
+                + '退库次数：' + value[0] + '<br>'
+                + '退库数量：' + value[1] + '<br>'
                 + '差额：' + value[2] + '<br>';
             return text
         }
     },
     xAxis: {
         type: 'value',
-        name: '需求',
+        name: '退库次数',
         nameGap: 16,//名称离坐标轴的距离
         nameTextStyle: {
             color: '#fff',
@@ -92,7 +92,7 @@ option = {
     },
     yAxis: {
         type: 'value',
-        name: '供给',
+        name: '退库数量',
         nameLocation: 'end',
         nameGap: 20,
         nameTextStyle: {
