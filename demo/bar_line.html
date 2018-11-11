@@ -13,10 +13,27 @@
     </select>
     <label style="float: right;font-weight: bold;margin-right: 10px">时间跨度:</label>
 </div>
-<div id="demo" style="width: 100%; height: 800px;clear: both;"></div>
+<div id="demo" style="width: 100%; height: 500px;clear: both;"></div>
 <script type="text/javascript" src="../static/echarts.js"></script>
 <script type="text/javascript" src="../static/jquery.min.js"></script>
 <script type="text/javascript">
+function GetRequest(name)
+	{
+		 var reg = new RegExp('(^|&)' + name + '=([^&]*)(&|$)', 'i');
+		 var r = window.location.search.substr(1).match(reg);
+		 if(r!=null)
+		 {
+			return decodeURIComponent(r[2]);
+		 }
+		 else
+		 {
+			return null;
+		 }
+	}
+var shijian = GetRequest("date");
+if(!shijian){
+    shijian = 0;
+}
 var myChart = echarts.init(document.getElementById('demo'));
 var totaldata = [
     [
@@ -50,7 +67,7 @@ option = {
         }
     },
     dataset: {
-        source:totaldata[1]
+        source:totaldata[shijian]
     },
     toolbox: {
         feature: {
