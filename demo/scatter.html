@@ -111,22 +111,21 @@ option = {
     visualMap: [
         {
             left: 'right',
-            top: '10%',
+            bottom: '5%',
             dimension: 2,
+            min: -1000,
+            max: 1000,
             type: 'piecewise',//分段式
             pieces:[
-                {min:600,color:'black'},
-                {min:300, max:600},
-                {min:0, max:300},
-                {min:-300, max:0},
-                {min:-600, max:-300},
-                {max:-600,color:'black'}
+                {min:600},
+                {min:-600, max:600},
+                {max:-600}
             ],
             inRange: {
-                color: ['#5291FF', '#C7DBFF']
+                colorLightness: [1, 0.1]
             },
-            textStyle: {
-                color: '#fff'
+            outOfRange: {//控制外的点，设置了这个，中间点的颜色才能正常显示
+                color: ['rgba(255,255,255,.2)']
             }
         }
     ],
